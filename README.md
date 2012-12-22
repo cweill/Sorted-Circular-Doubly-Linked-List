@@ -2,7 +2,9 @@
 
 _A sorted circular doubly linked list implementated in CoffeeScript._
 
-Made this since I couldn't find any other implementation of this datastructure in coffeescript or javascript. Features include the ability to _insert_, _delete_, and _print_ the contents of the list.
+Made this since I couldn't find any other implementation of this datastructure in coffeescript or javascript. Features include the ability to _insert_, _insertAll_, _remove_, _contains_, _find_, and _print_ the contents of the list. Simply overwrite the compare function to determine how you want your list sorted.
+
+In order to use the list insert the desired elements into the list. Next beginning from the _list.head_, _list.tail_, or _list.find datum_ node you can gracefully iterate through the circular list by accessing the node _prev_, _next_, and _datum_ attributes.
 
 Enjoy!
 
