@@ -7,13 +7,16 @@ class SortedCircularDoublyLinkedList
   
   constructor: (@head, @tail) ->
 
+  # Adds all the elements of a coffeescript list to a linked list
   insertAll: (list=[]) ->
     @insert x for x in list
     @head
 
+  # Inserts elements in sorted order
   insert: (datum) ->
     node = new Node datum
     
+    # Insert before helper method
     insertBefore = (a, b) ->
       if b is @head
         a.prev = @tail
@@ -25,6 +28,7 @@ class SortedCircularDoublyLinkedList
       a.next = b
       b.prev = a
     
+    # Insert after helper method
     insertAfter = (a, b) ->  
       if b is @tail 
         a.next = @head
@@ -58,6 +62,7 @@ class SortedCircularDoublyLinkedList
       @tail = node
     return node
   
+  # Removes the first element of the list with the same datum
   remove: (datum) ->
     current = @head
     while current.datum isnt datum 
@@ -77,6 +82,7 @@ class SortedCircularDoublyLinkedList
     else 
       current.next.prev = current.prev
 
+  # Boolean function that returns true if the element is present in the linked list
   contains: (datum) ->
     @find(datum)?
   
@@ -90,8 +96,9 @@ class SortedCircularDoublyLinkedList
           return current
         current = current.next
       null
-        
-  stringify: -> 
+
+  # Returns a comma delimited string of all the elements in the linked list
+  print: -> 
     output = ""
     if not @head?
       return
