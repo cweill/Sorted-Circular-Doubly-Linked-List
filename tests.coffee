@@ -4,7 +4,7 @@ console.log tester_list.print()
 console.log tester_list.insert 0
 console.log tester_list.print()
 console.log tester_list.insert 1
-console.log console.log tester_list.print()
+console.log tester_list.print()
 console.log tester_list.insert 2
 console.log tester_list.print()
 console.log tester_list.insert 3

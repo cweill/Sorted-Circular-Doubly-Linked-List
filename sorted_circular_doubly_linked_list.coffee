@@ -7,6 +7,9 @@ class SortedCircularDoublyLinkedList
   
   constructor: (@head, @tail) ->
 
+  compare: (datum1, datum2) ->
+    datum1 - datum2
+
   # Adds all the elements of a coffeescript list to a linked list
   insertAll: (list=[]) ->
     @insert x for x in list
@@ -46,26 +49,26 @@ class SortedCircularDoublyLinkedList
       @head.prev = node
       @tail = @head
       return node
-    if @head.datum > node.datum 
+    if @compare(@head.datum, node.datum) > 0
       insertBefore(node, @head)
     else 
       current = @head
       while current isnt @tail 
         next = current.next
-        if next.datum > node.datum
+        if @compare(next.datum, node.datum) > 0
           break
         current = current.next
       insertAfter(node, current)
-    if node.datum < @head.datum
+    if @compare(node.datum, @head.datum) < 0
       @head = node
-    if node.datum > @tail.datum
+    if @compare(node.datum, @tail.datum) > 0
       @tail = node
     return node
   
   # Removes the first element of the list with the same datum
   remove: (datum) ->
     current = @head
-    while current.datum isnt datum 
+    while @compare(current.datum, datum) isnt 0
       current = current.next
       if current is @head
         return
@@ -92,7 +95,7 @@ class SortedCircularDoublyLinkedList
     else
       current = @head
       while current.next isnt @head
-        if current.datum is datum
+        if @compare(current.datum, datum) is 0
           return current
         current = current.next
       null
