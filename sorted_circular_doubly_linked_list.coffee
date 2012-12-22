@@ -1,46 +1,49 @@
+class Node
+
+  constructor: (@datum, @prev, @next) ->
+
+
 class SortedCircularDoublyLinkedList
   
-  constructor: (@head, @tail, @current) ->
-
-  class Node
-
-    constructor: (@datum, @previous, @next) ->
-
-  insertBefore: (a, b) ->
-    if b is @head
-      a.previous = @tail
-      @head = a
-      @tail.next = @head
-    else 
-      a.previous = b.previous
-      b.previous.next = a
-    a.next = b
-    b.previous = a
-  
-  insertAfter: (a, b) ->  
-    if b is @tail 
-      a.next = @head
-      @tail = a
-      @head.previous = @tail
-    else 
-      a.next = b.next
-      b.next.previous = a
-    a.previous = b
-    b.next = a
+  constructor: (@head, @tail) ->
 
   insertAll: (list=[]) ->
     @insert x for x in list
+    @head
 
   insert: (datum) ->
     node = new Node datum
+    
+    insertBefore = (a, b) ->
+      if b is @head
+        a.prev = @tail
+        @head = a
+        @tail.next = @head
+      else 
+        a.prev = b.prev
+        b.prev.next = a
+      a.next = b
+      b.prev = a
+    
+    insertAfter = (a, b) ->  
+      if b is @tail 
+        a.next = @head
+        @tail = a
+        @head.prev = @tail
+      else 
+        a.next = b.next
+        b.next.prev = a
+      a.prev = b
+      b.next = a
+        
     unless @head?
       @head = node
       @head.next = node
-      @head.previous = node
+      @head.prev = node
       @tail = @head
-      return
+      return node
     if @head.datum > node.datum 
-      @insertBefore node, @head
+      insertBefore(node, @head)
     else 
       current = @head
       while current isnt @tail 
@@ -48,11 +51,12 @@ class SortedCircularDoublyLinkedList
         if next.datum > node.datum
           break
         current = current.next
-      @insertAfter node, current
+      insertAfter(node, current)
     if node.datum < @head.datum
       @head = node
     if node.datum > @tail.datum
       @tail = node
+    return node
   
   remove: (datum) ->
     current = @head
@@ -63,26 +67,18 @@ class SortedCircularDoublyLinkedList
     if current is @head 
       @head = current.next
       @tail.next = @head
-      @head.previous = @tail
+      @head.prev = @tail
     else 
-      current.previous.next = current.next
+      current.prev.next = current.next
     if current is @tail 
-      @tail = current.previous
-      @head.previous = @tail
+      @tail = current.prev
+      @head.prev = @tail
       @tail.next = @head
     else 
-      current.next.previous = current.previous
+      current.next.prev = current.prev
 
   contains: (datum) ->
-    unless @head?
-      false
-    else
-      current = @head
-      while current.next isnt @head
-        if current.datum is datum
-          true
-        current = current.next
-      false
+    @find(datum)?
   
   find: (datum) ->
     unless @head
@@ -95,27 +91,7 @@ class SortedCircularDoublyLinkedList
         current = current.next
       null
         
-  setCurrent: (datum) ->
-    @current = @find datum
-    datum
-  
-  getCurrent: ->
-    if @current
-      @current.datum
-    else
-      null
-      
-  getNext: ->
-    @current = @head unless @current
-    @current = @current.next
-    @current.datum
-        
-  getPrevious: ->
-    @current = @head unless @current
-    @current = @current.previous
-    @current.datum
-        
-  print: -> 
+  stringify: -> 
     output = ""
     if not @head?
       return
@@ -124,5 +100,4 @@ class SortedCircularDoublyLinkedList
     while current.next isnt @head
       current = current.next
       output += ", #{current.datum}"
-    console.log output
-    
+    output
