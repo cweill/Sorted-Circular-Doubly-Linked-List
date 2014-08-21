@@ -15,9 +15,13 @@ Node = (function() {
 
 SortedCircularDoublyLinkedList = (function() {
 
-  function SortedCircularDoublyLinkedList(head, tail) {
-    this.head = head;
-    this.tail = tail;
+  function SortedCircularDoublyLinkedList(options) {
+    var opt = options || {};
+    this.head = opt.head;
+    this.tail = opt.tail;
+    this.length = 0;
+    if( opt.compare) 
+      this.compare = opt.compare; 
   }
 
   SortedCircularDoublyLinkedList.prototype.compare = function(datum1, datum2) {
@@ -63,6 +67,7 @@ SortedCircularDoublyLinkedList = (function() {
       a.prev = b;
       return b.next = a;
     };
+    this.length++; //TODO it should be before return statement
     if (this.head == null) {
       this.head = node;
       this.head.next = node;
@@ -72,6 +77,7 @@ SortedCircularDoublyLinkedList = (function() {
     }
     if (this.compare(this.head.datum, node.datum) > 0) {
       insertBefore(node, this.head);
+      this.head = node;
     } else {
       current = this.head;
       while (current !== this.tail) {
@@ -82,38 +88,49 @@ SortedCircularDoublyLinkedList = (function() {
         current = current.next;
       }
       insertAfter(node, current);
+      if (current === this.tail) {
+        this.tail = node;
+      }
     }
-    if (this.compare(node.datum, this.head.datum) < 0) {
+    /*if (this.compare(node.datum, this.head.datum) < 0) {
       this.head = node;
     }
     if (this.compare(node.datum, this.tail.datum) > 0) {
       this.tail = node;
-    }
+    }*/
     return node;
   };
 
   SortedCircularDoublyLinkedList.prototype.remove = function(datum) {
     var current;
     current = this.head;
-    while (this.compare(current.datum, datum) !== 0) {
+    //TODO can be current.datum !== datum
+    //while (this.compare(current.datum, datum) !== 0) {
+    while (current.datum !== datum) {
       current = current.next;
       if (current === this.head) {
-        return;
+        break;
       }
     }
-    if (current === this.head) {
-      this.head = current.next;
-      this.tail.next = this.head;
-      this.head.prev = this.tail;
+    this.length--;
+    if(current === this.head && current === this.tail) {
+      this.head = null;
+      this.tail = null;
     } else {
-      current.prev.next = current.next;
-    }
-    if (current === this.tail) {
-      this.tail = current.prev;
-      this.head.prev = this.tail;
-      return this.tail.next = this.head;
-    } else {
-      return current.next.prev = current.prev;
+      if (current === this.head) {
+        this.head = current.next;
+        this.tail.next = this.head;
+        this.head.prev = this.tail;
+      } else {
+        current.prev.next = current.next;
+      }
+      if (current === this.tail) {
+        this.tail = current.prev;
+        this.head.prev = this.tail;
+        return this.tail.next = this.head;
+      } else {
+        return current.next.prev = current.prev;
+      }
     }
   };
 
@@ -127,12 +144,12 @@ SortedCircularDoublyLinkedList = (function() {
       return null;
     } else {
       current = this.head;
-      while (current.next !== this.head) {
+      do {
         if (this.compare(current.datum, datum) === 0) {
           return current;
         }
         current = current.next;
-      }
+      } while (current !== this.head);
       return null;
     }
   };
@@ -151,7 +168,64 @@ SortedCircularDoublyLinkedList = (function() {
     }
     return output;
   };
+  
+  SortedCircularDoublyLinkedList.prototype.pop = function() {
+    var datum = this.head.datum;
+    this.remove(datum);
+    return datum;
+  };
+
+  SortedCircularDoublyLinkedList.prototype.upperBound = function(datum) {
+    var upper = [];
+    var cur = this.find(datum);
+    if (cur && cur !== this.tail) {
+      do {
+        upper.push(cur.next.datum);
+        cur = cur.next;
+      } while (cur !== this.tail);
+    }
+    return upper;
+  };
+
+  SortedCircularDoublyLinkedList.prototype.lowerBound = function(datum) {
+    var lower = [];
+    var cur = this.find(datum);
+    if (cur && cur !== this.head) {
+      do {
+        lower.push(cur.prev.datum);
+        cur = cur.prev;
+      } while (cur !== this.head);
+    }
+    return lower;
+  };
+  SortedCircularDoublyLinkedList.prototype.lowerCount = function(datum) {
+    var count = 0;
+    var cur = this.find(datum);
+    if (cur && cur !== this.head) {
+      do {
+        count++;
+        cur = cur.prev;
+      } while (cur !== this.head);
+    }
+    return count;
+  };
+
+  SortedCircularDoublyLinkedList.prototype.upperCount = function(datum) {
+    var count = 0;
+    var cur = this.find(datum);
+    if (cur && cur !== this.tail) {
+      do {
+        count++;
+        cur = cur.next;
+      } while (cur !== this.tail);
+    }
+    return count;
+  };
 
   return SortedCircularDoublyLinkedList;
 
 })();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = SortedCircularDoublyLinkedList;
+}
