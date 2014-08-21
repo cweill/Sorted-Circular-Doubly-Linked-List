@@ -67,7 +67,7 @@ SortedCircularDoublyLinkedList = (function() {
       a.prev = b;
       return b.next = a;
     };
-    this.length++; //TODO it should be before return statement
+    this.length++; 
     if (this.head == null) {
       this.head = node;
       this.head.next = node;
@@ -92,20 +92,12 @@ SortedCircularDoublyLinkedList = (function() {
         this.tail = node;
       }
     }
-    /*if (this.compare(node.datum, this.head.datum) < 0) {
-      this.head = node;
-    }
-    if (this.compare(node.datum, this.tail.datum) > 0) {
-      this.tail = node;
-    }*/
     return node;
   };
 
   SortedCircularDoublyLinkedList.prototype.remove = function(datum) {
     var current;
     current = this.head;
-    //TODO can be current.datum !== datum
-    //while (this.compare(current.datum, datum) !== 0) {
     while (current.datum !== datum) {
       current = current.next;
       if (current === this.head) {
